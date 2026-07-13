@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #0d0d0d;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+        .login-box {
+            background: #1a1a2e;
+            padding: 40px 25px;
+            border-radius: 20px;
+            max-width: 380px;
+            margin: 80px auto;
+            box-shadow: 0 0 40px #16213e;
+        }
+        .login-box h2 {
+            color: #e94560;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .login-box input {
+            padding: 14px;
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            background: #0f3460;
+            color: white;
+            font-size: 18px;
+            margin: 8px 0;
+        }
+        .login-box input::placeholder {
+            color: #aaa;
+        }
+        .login-box button {
+            padding: 14px;
+            width: 100%;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #errorMsg {
+            color: #ff6b6b;
+            margin-top: 12px;
+            font-size: 16px;
+        }
+        .gallery-title {
+            color: #e94560;
+            font-size: 32px;
+            margin: 20px 0 30px 0;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            max-width: 800px;
+            margin: auto;
+            padding: 10px;
+        }
+        .gallery-grid img,
+        .gallery-grid video {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #e94560;
+        }
+        .hidden {
+            display: none;
+        }
+        .count-badge {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .note {
+            color: #ffaa00;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .empty-msg {
+            color: #888;
+            font-size: 18px;
+            padding: 50px 20px;
+            border: 2px dashed #444;
+            border-radius: 15px;
+            margin: 20px;
+        }
+        .empty-msg span {
+            font-size: 50px;
+            display: block;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loginPage" class="login-box">
+        <h2>🔐 Enter Password</h2>
+        <input type="password" id="passwordInput" placeholder="Password daalein...">
+        <button onclick="checkPassword()">Submit</button>
+        <p id="errorMsg"></p>
+    </div>
+
+    <div id="galleryPage" class="hidden">
+        <h1 class="gallery-title">📸 My Gallery</h1>
+        <p class="count-badge" id="photoCount">Total: 0 items</p>
+        <div class="gallery-grid" id="galleryContainer">
+            <div class="empty-msg">
+                <span>📭</span>
+                Abhi koi photo nahi hai<br>
+                <small style="color:#666;">Baad mein photos daalna</small>
+            </div>
+        </div>
+        <p class="note">🔒 Private Gallery | Password Protected</p>
+    </div>
+
+    <script>
+        var correctPassword = "1234";
+
+        var photoList = [];
+
+        var videoList = [];
+
+        var allMedia = [];
+
+        photoList.forEach(function(url) {
+            allMedia.push({ type: "photo", url: url });
+        });
+
+        videoList.forEach(function(url) {
+            allMedia.push({ type: "video", url: url });
+        });
+
+        function checkPassword() {
+            var input = document.getElementById("passwordInput").value;
+            if (input === correctPassword) {
+                document.getElementById("loginPage").style.display = "none";
+                document.getElementById("galleryPage").style.display = "block";
+                loadGallery();
+            } else {
+                document.getElementById("errorMsg").innerHTML = "❌ Galat password! Dobara try karein.";
+            }
+        }
+
+        function loadGallery() {
+            var container = document.getElementById("galleryContainer");
+            container.innerHTML = "";
+
+            if (allMedia.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-msg">
+                        <span>📭</span>
+                        Abhi koi photo nahi hai<br>
+                        <small style="color:#666;">Baad mein photos daalna</small>
+                    </div>
+                `;
+                document.getElementById("photoCount").textContent = "Total: 0 items";
+                return;
+            }
+
+            allMedia.forEach(function(item) {
+                if (item.type === "photo") {
+                    var img = document.createElement("img");
+                    img.src = item.url;
+                    img.alt = "Photo";
+                    img.onerror = function() {
+                        this.src = "https://via.placeholder.com/400x400/333/e94560?text=Error";
+                    };
+                    container.appendChild(img);
+                } else if (item.type === "video") {
+                    var video = document.createElement("video");
+                    video.src = item.url;
+                    video.controls = true;
+                    video.setAttribute("playsinline", "");
+                    container.appendChild(video);
+                }
+            });
+
+            document.getElementById("photoCount").textContent = "Total: " + allMedia.length + " items";
+        }
+    </script>
+
+</body>
+</html>
